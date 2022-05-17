@@ -10,7 +10,25 @@ app.get("/", (req, res) => {
 
   console.log(JSON.stringify(json0));
 
-  res.send(data || "Express on Vercel shay react cesium");
+  res.send(data || "Failed to read sites.json");
+});
+
+app.get("/files", (req, res) => {
+  const map = new Map();
+
+  map["directory"] = __dirname;
+
+  map["filename"] = __filename;
+
+  try {
+    const data = fs.readdirSync(__dirname);
+
+    map["dirfiles"] = data;
+  } catch (e) {
+    map["exception"] = e;
+  }
+
+  res.send(map);
 });
 
 app.listen(5000, () => {
