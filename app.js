@@ -3,14 +3,30 @@ const fs = require("fs");
 
 const app = express();
 
+// Parse URL-encoded bodies (as sent by HTML forms)
+app.use(express.urlencoded({ extended: true }))
+
+// Parse JSON bodies (as sent by API clients)
+app.use(express.json());
+
+app.post('/files', (req, res) => {
+  let body = req.constructor.toString();//.body;
+
+  body = req.body;
+
+  console.log(body);
+
+  res.send(body);
+})
+
 app.get("/", (req, res) => {
   const data = fs.readFileSync("./sites.json", "utf8");
 
-  const json0 = JSON.parse(data);
+  const obj = JSON.parse(data);
 
-  console.log(JSON.stringify(json0));
+  console.log(JSON.stringify(obj));
 
-  res.send(data || "Failed to read sites.json");
+  res.send(obj);
 });
 
 app.get("/files", (req, res) => {
