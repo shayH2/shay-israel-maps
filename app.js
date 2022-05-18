@@ -1,5 +1,6 @@
 const express = require("express");
 const fs = require("fs");
+const { writeFile } = require("fs/promises");
 
 const app = express();
 
@@ -17,6 +18,39 @@ app.post('/files', (req, res) => {
   console.log(body);
 
   res.send(body);
+})
+
+app.put('/files/:name', (req, res) => {
+  const name = req.params.name;
+
+  let fd = fs.openSync(name, "a+");
+
+  const str = fs.readFileSync(fd);
+
+  fs.close(fd);
+
+  fd = fs.openSync(name, "w");
+
+  console.log(`str = ${str}`);
+
+  console.log(`req.body = ${JSON.stringify(req.body)}`);
+
+  let jsn;
+
+  if (str.length > 0)
+    jsn = JSON.parse(str);
+
+  jsn = jsn || [];
+
+  jsn.push(req.body);
+
+  fs.writeFileSync(fd, JSON.stringify(jsn));
+
+  fs.closeSync(fd);
+
+  console.log(jsn);
+
+  res.send(jsn);
 })
 
 app.get("/", (req, res) => {
