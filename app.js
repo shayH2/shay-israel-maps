@@ -44,7 +44,7 @@ app.put('/files/:name', (req, res) => {
 
   jsn.push(req.body);
 
-  fs.writeFileSync(fd, JSON.stringify(jsn));
+  fs.writeFileSync(fd, JSON.stringify(jsn)); contr
 
   fs.closeSync(fd);
 
@@ -52,6 +52,18 @@ app.put('/files/:name', (req, res) => {
 
   res.send(jsn);
 })
+
+app.get("/methods", (req, res) => {
+  const myMethods = Object.getOwnPropertyNames(this);
+
+  myMethods.forEach(item => console.log(item));
+
+  const filteredMethods = myMethods.filter(item => typeof this.item === 'function')
+
+  console.log(JSON.stringify(myMethods));
+
+  res.send(myMethods);
+});
 
 app.get("/", (req, res) => {
   const data = fs.readFileSync("./sites.json", "utf8");
