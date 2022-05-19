@@ -2,7 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const { writeFile } = require("fs/promises");
 
-const verison = "1.0.0.0";
+const version = "1.0.0.0";
 
 const app = express();
 
