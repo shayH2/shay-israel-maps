@@ -1,6 +1,6 @@
 const express = require("express");
 const fs = require("fs");
-const { writeFile } = require("fs/promises");
+const sites = require('./sites');
 
 const version = "1.0.0.0";
 
@@ -13,30 +13,30 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
 
 app.post('/files', (req, res) => {
-    let body = req.constructor.toString(); //.body;
+  let body = req.constructor.toString(); //.body;
 
-    body = req.body;
+  body = req.body;
 
-    console.log(body);
+  console.log(body);
 
-    res.send(body);
+  res.send(body);
 });
 
 app.delete('/files/:name', (req, res) => {
-    const name = req.params.name;
+  const name = req.params.name;
 
-    let data = name;
+  let data = name;
 
-    try {
-        if (fs.existsSync(name))
-            fs.unlinkSync(name);
-    } catch (e) {
-        data = e;
-    }
+  try {
+    if (fs.existsSync(name))
+      fs.unlinkSync(name);
+  } catch (e) {
+    data = e;
+  }
 
-    console.log(data);
+  console.log(data);
 
-    res.send(data);
+  res.send(data);
 });
 
 const validPrefix = "a-zA-Z_";
@@ -46,98 +46,102 @@ const validCharacters = "a-zA-Z_";
 const regex1 = new RegExp(`^[${validPrefix}]+[${validCharacters}]*$`);
 const regex2 = new RegExp(`^[${validPrefix}]+[${validCharacters}]*\.${validExtension}$`);
 
+app.get('/sites', (req, res) => {
+  res.send(sites);
+});
+
 app.put('/files/:name', (req, res) => {
-    try {
-        let name = req.params.name;
+  try {
+    let name = req.params.name;
 
-        let t = regex1.test(name);
+    let t = regex1.test(name);
 
-        if (t === false)
-            return res.status(500).send(`invalid input ${name}`);
+    if (t === false)
+      return res.status(500).send(`invalid input ${name}`);
 
-        console.log(`${name}, ${regex1}, ${t}`);
+    console.log(`${name}, ${regex1}, ${t}`);
 
-        t = regex2.test(name);
+    t = regex2.test(name);
 
-        // Add .json extension to filename, by default.
-        if (t === false)
-            name = `${name}.json`;
+    // Add .json extension to filename, by default.
+    if (t === false)
+      name = `${name}.json`;
 
-        console.log(`${name}, ${regex2}, ${t}`);
+    console.log(`${name}, ${regex2}, ${t}`);
 
-        console.log(`open file: ${name}`);
+    console.log(`open file: ${name}`);
 
-        let fd = fs.openSync(name, "a+");
+    let fd = fs.openSync(name, "a+");
 
-        console.log(`read file descriptor: ${fd}`);
+    console.log(`read file descriptor: ${fd}`);
 
-        const str = fs.readFileSync(fd);
+    const str = fs.readFileSync(fd);
 
-        console.log(`str = ${str}`);
+    console.log(`str = ${str}`);
 
-        console.log(`close file descriptor: ${fd}`);
+    console.log(`close file descriptor: ${fd}`);
 
-        fs.closeSync(fd);
+    fs.closeSync(fd);
 
-        fd = fs.openSync(name, "w");
+    fd = fs.openSync(name, "w");
 
-        //console.log(`req.body = ${JSON.stringify(req.body)}`);
+    //console.log(`req.body = ${JSON.stringify(req.body)}`);
 
-        let jsn;
+    let jsn;
 
-        if (str.length > 0)
-            jsn = JSON.parse(str);
+    if (str.length > 0)
+      jsn = JSON.parse(str);
 
-        jsn = jsn || [];
+    jsn = jsn || [];
 
-        jsn.push(req.body);
+    jsn.push(req.body);
 
-        fs.writeFileSync(fd, JSON.stringify(jsn));
+    fs.writeFileSync(fd, JSON.stringify(jsn));
 
-        fs.closeSync(fd);
+    fs.closeSync(fd);
 
-        //console.log(jsn);
-    } catch (e) {
-        return res.status(500).send(e);
-    }
+    //console.log(jsn);
+  } catch (e) {
+    return res.status(500).send(e);
+  }
 
-    res.send(jsn);
+  res.send(jsn);
 })
 
-app.get("/methods", (req, res) => {});
+app.get("/methods", (req, res) => { });
 
 app.get("/", (req, res) => {
-    const data = fs.readFileSync("./sites.json", "utf8");
+  const data = fs.readFileSync("./sites.json", "utf8");
 
-    const obj = JSON.parse(data);
+  const obj = JSON.parse(data);
 
-    console.log(JSON.stringify(obj));
+  console.log(JSON.stringify(obj));
 
-    res.send(obj);
+  res.send(obj);
 });
 
 app.get("/files", (req, res) => {
-    const map = new Map();
+  const map = new Map();
 
-    map["version"] = version;
+  map["version"] = version;
 
-    map["directory"] = __dirname;
+  map["directory"] = __dirname;
 
-    map["filename"] = __filename;
+  map["filename"] = __filename;
 
-    try {
-        const data = fs.readdirSync(__dirname);
+  try {
+    const data = fs.readdirSync(__dirname);
 
-        map["dirfiles"] = data;
-    } catch (e) {
-        map["exception"] = e;
-    }
+    map["dirfiles"] = data;
+  } catch (e) {
+    map["exception"] = e;
+  }
 
-    res.send(map);
+  res.send(map);
 });
 
 app.listen(5000, () => {
-    console.log("Running on port 5000.");
+  console.log("Running on port 5000.");
 });
 
 // Export the Express API
