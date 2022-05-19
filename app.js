@@ -47,55 +47,59 @@ const regex1 = new RegExp(`^[${validPrefix}]+[${validCharacters}]*$`);
 const regex2 = new RegExp(`^[${validPrefix}]+[${validCharacters}]*\.${validExtension}$`);
 
 app.put('/files/:name', (req, res) => {
-    let name = req.params.name;
+    try {
+        let name = req.params.name;
 
-    let t = regex1.test(name);
+        let t = regex1.test(name);
 
-    if (t === false)
-        return res.status(500).send(`invalid input ${name}`);
+        if (t === false)
+            return res.status(500).send(`invalid input ${name}`);
 
-    console.log(`${name}, ${regex1}, ${t}`);
+        console.log(`${name}, ${regex1}, ${t}`);
 
-    t = regex2.test(name);
+        t = regex2.test(name);
 
-    // Add .json extension to filename, by default.
-    if (t === false)
-        name = `${name}.json`;
+        // Add .json extension to filename, by default.
+        if (t === false)
+            name = `${name}.json`;
 
-    console.log(`${name}, ${regex2}, ${t}`);
+        console.log(`${name}, ${regex2}, ${t}`);
 
-    console.log(`open file: ${name}`);
+        console.log(`open file: ${name}`);
 
-    let fd = fs.openSync(name, "a+");
+        let fd = fs.openSync(name, "a+");
 
-    console.log(`read file descriptor: ${fd}`);
+        console.log(`read file descriptor: ${fd}`);
 
-    const str = fs.readFileSync(fd);
+        const str = fs.readFileSync(fd);
 
-    console.log(`str = ${str}`);
+        console.log(`str = ${str}`);
 
-    console.log(`close file descriptor: ${fd}`);
+        console.log(`close file descriptor: ${fd}`);
 
-    fs.closeSync(fd);
+        fs.closeSync(fd);
 
-    fd = fs.openSync(name, "w");
+        fd = fs.openSync(name, "w");
 
-    //console.log(`req.body = ${JSON.stringify(req.body)}`);
+        //console.log(`req.body = ${JSON.stringify(req.body)}`);
 
-    let jsn;
+        let jsn;
 
-    if (str.length > 0)
-        jsn = JSON.parse(str);
+        if (str.length > 0)
+            jsn = JSON.parse(str);
 
-    jsn = jsn || [];
+        jsn = jsn || [];
 
-    jsn.push(req.body);
+        jsn.push(req.body);
 
-    fs.writeFileSync(fd, JSON.stringify(jsn));
+        fs.writeFileSync(fd, JSON.stringify(jsn));
 
-    fs.closeSync(fd);
+        fs.closeSync(fd);
 
-    //console.log(jsn);
+        //console.log(jsn);
+    } catch (e) {
+        return res.status(500).send(e);
+    }
 
     res.send(jsn);
 })
