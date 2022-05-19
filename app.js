@@ -2,6 +2,8 @@ const express = require("express");
 const fs = require("fs");
 const { writeFile } = require("fs/promises");
 
+const verison = "1.0.0.0";
+
 const app = express();
 
 // Parse URL-encoded bodies (as sent by HTML forms)
@@ -112,6 +114,8 @@ app.get("/", (req, res) => {
 
 app.get("/files", (req, res) => {
     const map = new Map();
+
+    map["version"] = version;
 
     map["directory"] = __dirname;
 
