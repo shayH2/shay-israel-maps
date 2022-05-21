@@ -1,8 +1,6 @@
-const sites = [
-    {
-        "name": "Petah Tikva",
-        "region": [
-            {
+const sites = [{
+        "name": "Somewhere 1",
+        "region": [{
                 "lat": 34.04,
                 "lon": 35.06
             },
@@ -21,9 +19,8 @@ const sites = [
         ]
     },
     {
-        "name": "Tel Aviv",
-        "region": [
-            {
+        "name": "Somewhere 2",
+        "region": [{
                 "lat": 33.04,
                 "lon": 34.06
             },
