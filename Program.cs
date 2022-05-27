@@ -8,7 +8,7 @@ namespace StringMatch
         {
             Console.WriteLine("Hello World!");
 
-            int firstMatchIndex = FindMatch("abbabaabababbbabbba", "bbabb");
+            int firstMatchIndex = FindMatch("abaababaabababbbabbba", "abab");
 
             Console.WriteLine($"{nameof(firstMatchIndex)}: {firstMatchIndex}");
         }
@@ -82,7 +82,7 @@ namespace StringMatch
                 if (!foundDifferenceLeft && !foundDifferenceRight)
                     firstMatchIndex = index;
 
-                index++;
+                index += Math.Min(left, differentLettersCountInPrefix);
             }
 
             return firstMatchIndex ?? -1;
